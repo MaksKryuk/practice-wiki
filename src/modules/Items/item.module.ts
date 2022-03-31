@@ -5,9 +5,8 @@ import { ItemController } from './item.controller';
 import { ItemService } from './item.service';
 import { Item_tags } from 'src/modules/Items/itemTags.model';
 import { Items_item_tag } from 'src/modules/Items/itemsItemTags.model';
-import { Recipes } from '../Recipes/recipes.model';
 import { Items_Recipes } from './itemsRecipes.model';
-
+import { Recipes } from './recipes.model';
 @Module({
   imports: [
     SequelizeModule.forFeature([

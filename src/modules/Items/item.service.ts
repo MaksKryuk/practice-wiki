@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Item } from './items.model';
 import { Item_tags } from './itemTags.model';
 import { Items_item_tag } from './itemsItemTags.model';
-import { Recipes } from '../Recipes/recipes.model';
+import { Recipes } from './recipes.model';
 import { Items_Recipes } from 'src/modules/Items/itemsRecipes.model';
 
 @Injectable()

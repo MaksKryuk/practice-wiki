@@ -7,7 +7,7 @@ import { Articles } from './modules/articles/articles.model';
 import { Items_item_tag } from './modules/Items/itemsItemTags.model';
 import { Item_tags } from './modules/Items/itemTags.model';
 import { Items_Recipes } from './modules/Items/itemsRecipes.model';
-import { Recipes } from './modules/Recipes/recipes.model';
+import { Recipes } from './modules/Items/recipes.model';
 import { Text_blocks } from './modules/textBlocks/textBlocks.model';
 import { Users } from './modules/users/users.model';
 import { Articles_text_blocks } from './models/articlesTextBlocks.model';

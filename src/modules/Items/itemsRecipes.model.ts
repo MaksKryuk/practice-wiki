@@ -1,6 +1,6 @@
 import { Model, Table, ForeignKey, Column } from 'sequelize-typescript';
 import { Item } from './items.model';
-import { Recipes } from '../Recipes/recipes.model';
+import { Recipes } from './recipes.model';
 @Table
 export class Items_Recipes extends Model {
   @ForeignKey(() => Item)
