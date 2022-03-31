@@ -6,9 +6,9 @@ import {
   HasMany,
 } from 'sequelize-typescript';
 import { Articles } from '../articles/articles.model';
-import { Items_item_tag } from './itemsItemTags.model';
+import { Items_item_tag } from './itemTags/itemsItemTags.model';
 import { Items_Recipes } from './itemsRecipes.model';
-import { Item_tags } from './itemTags.model';
+import { Item_tags } from './itemTags/itemTags.model';
 import { Recipes } from './recipes.model';
 
 @Table

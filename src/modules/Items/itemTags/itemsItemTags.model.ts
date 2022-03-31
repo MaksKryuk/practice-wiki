@@ -1,5 +1,5 @@
 import { Model, Table, ForeignKey, Column } from 'sequelize-typescript';
-import { Item } from './items.model';
+import { Item } from '../items.model';
 import { Item_tags } from './itemTags.model';
 @Table
 export class Items_item_tag extends Model {
