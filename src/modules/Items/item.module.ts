@@ -9,6 +9,8 @@ import { Items_Recipes } from './recipes/itemsRecipes.model';
 import { Recipes } from './recipes/recipes.model';
 import { ItemTagsController } from './itemTags/itemTags.controller';
 import { ItemTagsService } from './itemTags/itemTags.service';
+import { RecipesController } from './recipes/recipes.controller';
+import { RecipesService } from './recipes/recipes.service';
 @Module({
   imports: [
     SequelizeModule.forFeature([
@@ -19,7 +21,7 @@ import { ItemTagsService } from './itemTags/itemTags.service';
       Items_Recipes,
     ]),
   ],
-  controllers: [ItemController, ItemTagsController],
-  providers: [ItemService, ItemTagsService],
+  controllers: [ItemController, ItemTagsController, RecipesController],
+  providers: [ItemService, ItemTagsService, RecipesService],
 })
 export class ItemModule {}
