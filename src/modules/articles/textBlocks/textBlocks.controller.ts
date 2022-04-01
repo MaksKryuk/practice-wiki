@@ -20,8 +20,8 @@ export class TextBlocksController {
   }
 
   @Post('/')
-  create(@Body() body: { text: string }) {
-    return this.textBlocksService.create(body.text);
+  create(@Body() body: { textMass: string }) {
+    return this.textBlocksService.create(body.textMass);
   }
 
   @Get(':id')

@@ -66,14 +66,17 @@ export class ArticlesService {
 
   async addTextBlockToArticle(
     id: string,
-    txt: string,
+    textMass: string,
     positionNumber: string,
   ): Promise<void> {
     let textBlock = await this.textBlocksModel.findOne({
-      where: { text: txt },
+      where: { text: textMass },
     });
     if (textBlock == null) {
-      this.textBlocksModel.create({ text: txt }, { returning: true });
+      textBlock = await this.textBlocksModel.create(
+        { text: textMass },
+        { returning: true },
+      );
     }
     this.articlesTextBlocksModel.create({
       article_id: id,

@@ -42,14 +42,14 @@ export class ArticlesController {
     return this.articlesService.delete(id);
   }
 
-  @Post(':id/addTexBlock')
+  @Post(':id/addTextBlock')
   addTextBlockToArticle(
     @Param('id') id: string,
-    @Body() body: { txt: string; positionNumber: string },
+    @Body() body: { textMass: string; positionNumber: string },
   ) {
     return this.articlesService.addTextBlockToArticle(
       id,
-      body.txt,
+      body.textMass,
       body.positionNumber,
     );
   }
