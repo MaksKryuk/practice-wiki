@@ -80,7 +80,7 @@ export class ArticlesService {
     }
     this.articlesTextBlocksModel.create({
       article_id: id,
-      text_block_id: textBlock.id,
+      text_blocks_id: textBlock.id,
       position_number: positionNumber,
     });
   }
