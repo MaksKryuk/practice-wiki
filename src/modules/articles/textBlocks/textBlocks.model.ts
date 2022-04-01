@@ -1,6 +1,6 @@
 import { BelongsToMany, Column, Model, Table } from 'sequelize-typescript';
-import { Articles } from '../articles/articles.model';
-import { Articles_text_blocks } from '../../models/articlesTextBlocks.model';
+import { Articles } from '../articles.model';
+import { Articles_text_blocks } from './articlesTextBlocks.model';
 
 @Table
 export class Text_blocks extends Model {

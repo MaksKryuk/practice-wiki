@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Item } from './items.model';
-import { Item_tags } from 'src/modules/Items/itemTags.model';
-import { Items_item_tag } from 'src/modules/Items/itemsItemTags.model';
+import { Item_tags } from './itemTags.model';
+import { Item } from '../items.model';
+import { Items_item_tag } from 'src/modules/Items/itemTags/itemsItemTags.model';
 
 @Injectable()
 export class ItemTagsService {
@@ -16,6 +16,10 @@ export class ItemTagsService {
   }
 
   async create(itemTagName: string): Promise<Item_tags> {
+    const tag = await this.itemTagsModel.findOne({
+      where: { tag_name: itemTagName },
+    });
+    if (tag) return tag;
     return this.itemTagsModel.create({ tag_name: itemTagName });
   }
 

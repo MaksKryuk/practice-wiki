@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Articles_text_blocks } from './articlesTextBlocks.model';
 import { Text_blocks } from './textBlocks.model';
 
 @Injectable()
@@ -7,6 +8,8 @@ export class TextBlocksService {
   constructor(
     @InjectModel(Text_blocks)
     private textBlocksModel: typeof Text_blocks,
+    @InjectModel(Articles_text_blocks)
+    private articlesTextBlocksModel: typeof Articles_text_blocks,
   ) {}
 
   async findAll(): Promise<Text_blocks[]> {
@@ -22,7 +25,9 @@ export class TextBlocksService {
   }
 
   findOne(id: string): Promise<Text_blocks> {
-    return this.textBlocksModel.findOne({ where: { id } });
+    return this.textBlocksModel.findOne({
+      where: { id },
+    });
   }
 
   async update(id: string, textMass: string): Promise<Text_blocks> {

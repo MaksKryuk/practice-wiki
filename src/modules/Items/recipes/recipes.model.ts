@@ -1,5 +1,5 @@
 import { Model, Table, BelongsToMany, Column } from 'sequelize-typescript';
-import { Item } from './items.model';
+import { Item } from '../items.model';
 import { Items_Recipes } from './itemsRecipes.model';
 
 @Table

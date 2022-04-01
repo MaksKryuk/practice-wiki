@@ -7,9 +7,9 @@ import {
 } from 'sequelize-typescript';
 import { Articles } from '../articles/articles.model';
 import { Items_item_tag } from './itemTags/itemsItemTags.model';
-import { Items_Recipes } from './itemsRecipes.model';
+import { Items_Recipes } from './recipes/itemsRecipes.model';
 import { Item_tags } from './itemTags/itemTags.model';
-import { Recipes } from './recipes.model';
+import { Recipes } from './recipes/recipes.model';
 
 @Table
 export class Item extends Model {

@@ -1,6 +1,6 @@
 import { Column, Model, Table, ForeignKey } from 'sequelize-typescript';
-import { Text_blocks } from '../modules/textBlocks/textBlocks.model';
-import { Articles } from '../modules/articles/articles.model';
+import { Text_blocks } from './textBlocks.model';
+import { Articles } from '../articles.model';
 @Table
 export class Articles_text_blocks extends Model {
   @ForeignKey(() => Articles)
