@@ -6,37 +6,46 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { ItemTagsService } from './itemTags.service';
-import { Item_tags } from './itemTags.model';
+import { JwtAuthGuard } from 'src/modules/users/auth/jwt-auth.guard';
+import { ItemTagDTO } from 'src/modules/dto/item-tag.dto';
+import { ItemtagOutputDTO } from 'src/modules/output-dto/item-tag.output.dto';
 
 @Controller('/itemTags')
 export class ItemTagsController {
   constructor(private readonly itemTagsService: ItemTagsService) {}
 
   @Get('/')
-  findAll() {
-    return this.itemTagsService.findAll();
+  async findAll() {
+    return (await this.itemTagsService.findAll()).map((tag) => new ItemtagOutputDTO(tag));
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('/')
-  create(@Body() body: { itemTagName: string }) {
-    return this.itemTagsService.create(body.itemTagName);
+  async create(@Body() itemtag: ItemTagDTO ) {
+    const newTag = await this.itemTagsService.create(itemtag.tag_name);
+    return new ItemtagOutputDTO(newTag);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.itemTagsService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const tag = this.itemTagsService.findOne(id);
+    return new ItemtagOutputDTO(tag);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Put(':id')
-  update(
+  async update(
     @Param('id') id: string,
-    @Body() body: { itemTagName: string },
-  ): Promise<Item_tags> {
-    return this.itemTagsService.update(id, body.itemTagName);
+    @Body() itemtag: ItemTagDTO,
+  ): Promise<ItemtagOutputDTO> {
+    const updatedTag = await this.itemTagsService.update(id, itemtag.tag_name);
+    return new ItemtagOutputDTO(updatedTag);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   delete(@Param('id') id: string) {
     return this.itemTagsService.delete(id);

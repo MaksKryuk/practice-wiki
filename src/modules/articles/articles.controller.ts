@@ -6,51 +6,74 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
 import { Articles } from './articles.model';
+import { ArticleDTO } from '../dto/article.dto';
+import { ArticleTextblockDTO } from '../dto/article-textblock.dto';
+import { ValidationPipe } from 'src/pipes/validation.pipe';
+import { JwtAuthGuard } from '../users/auth/jwt-auth.guard';
+import { ArticleOutputDTO } from '../output-dto/article.output.dto';
+import { ArticleTextBlocksService } from './textBlocks/articlesTextblocks/articlesTextBlocks.service';
+import { TextBlocksService } from './textBlocks/textBlocks.service';
 
 @Controller('/articles')
 export class ArticlesController {
-  constructor(private readonly articlesService: ArticlesService) {}
+  constructor(
+    private readonly articlesService: ArticlesService,
+    private readonly articlesTextblocksService: ArticleTextBlocksService,
+    private readonly textblocksService: TextBlocksService
+    ) {}
 
   @Get('/')
-  findAll() {
-    return this.articlesService.findAll();
+  async findAll() {
+    return ( await this.articlesService.findAll()).map((article) => new ArticleOutputDTO(article));
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('/')
-  create(@Body() body: { itemId: string; articleName: string }) {
-    return this.articlesService.create(body.itemId, body.articleName);
+  async create(@Body(new ValidationPipe) article: ArticleDTO) {
+    const newArticle = await this.articlesService.create(article); 
+    return new ArticleOutputDTO(newArticle);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.articlesService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const article = await this.articlesService.findOne(id);
+    return new ArticleOutputDTO(article);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Put(':id')
-  update(
+  async update(
     @Param('id') id: string,
-    @Body() body: { itemId: string; articleName: string },
-  ): Promise<Articles> {
-    return this.articlesService.update(id, body.itemId, body.articleName);
+    @Body(new ValidationPipe) article: ArticleDTO,
+  ): Promise<ArticleOutputDTO> {
+    const updatedArticle = await this.articlesService.update(id, article);
+    return new ArticleOutputDTO(updatedArticle);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  delete(@Param('id') id: string) {
-    return this.articlesService.delete(id);
+  async delete(@Param('id') id: string) {
+    await this.articlesService.delete(id);
+    const record = await this.articlesTextblocksService.findOne(id);
+    console.log("@@@@@@@@", record, id),
+    await this.textblocksService.delete(record.text_blocks_id);
+    await this.articlesTextblocksService.delete(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post(':id/addTextBlock')
-  addTextBlockToArticle(
+  async addTextBlockToArticle(
     @Param('id') id: string,
-    @Body() body: { textMass: string; positionNumber: string },
+    @Body(new ValidationPipe) textblock: ArticleTextblockDTO,
   ) {
-    return this.articlesService.addTextBlockToArticle(
+    const newTextblock = await this.articlesService.addTextBlockToArticle(
       id,
-      body.textMass,
-      body.positionNumber,
+      textblock,
     );
+    return newTextblock;
   }
 }

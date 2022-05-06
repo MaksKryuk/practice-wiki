@@ -6,57 +6,73 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
+import { ValidationPipe } from 'src/pipes/validation.pipe';
+import { JwtAuthGuard } from '../users/auth/jwt-auth.guard';
+import { ItemTagDTO } from '../dto/item-tag.dto';
+import { ItemDTO } from '../dto/item.dto';
+import { RecipeDTO } from '../dto/recipe.dto';
 import { ItemService } from './item.service';
-import { Item } from './items.model';
+import { ItemOutPutDTO } from '../output-dto/item.output.dto';
 
 @Controller('/items')
 export class ItemController {
   constructor(private readonly itemService: ItemService) {}
 
   @Get('/')
-  findAll() {
-    return this.itemService.findAll();
+  async findAll() {
+    return (await this.itemService.findAll()).map((item) => new ItemOutPutDTO(item));
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('/')
-  create(@Body() body: { itemName: string }) {
-    return this.itemService.create(body.itemName);
+  async create(@Body(new ValidationPipe) item: ItemDTO) {
+    const newItem = await this.itemService.create(item.itemName);
+    return new ItemOutPutDTO(newItem);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.itemService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const item = await this.itemService.findOne(id);  
+    return new ItemOutPutDTO(item) ;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Put(':id')
-  update(
+  async update(
     @Param('id') id: string,
-    @Body() body: { itemName: string },
-  ): Promise<Item> {
-    return this.itemService.update(id, body.itemName);
+    @Body(new ValidationPipe) item: ItemDTO,
+  ): Promise<ItemOutPutDTO> {
+    const updatedItem = await this.itemService.update(id, item.itemName);
+    return new ItemOutPutDTO(updatedItem);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   delete(@Param('id') id: string) {
     return this.itemService.delete(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post(':id/addTag')
-  addTag(@Param('id') id: string, @Body() body: { tagName: string }) {
-    return this.itemService.addTagToItem(id, body.tagName);
+  async addTag(@Param('id') id: string, @Body(new ValidationPipe) tag: ItemTagDTO) {
+    const newTag = await this.itemService.addTagToItem(id, tag.tag_name);
+    return newTag;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post(':id/addRecipe')
-  addRecipeToItem(
+  async addRecipeToItem(
     @Param('id') id: string,
-    @Body() body: { whereMade: string; recipeName: string; mats: string },
+    @Body(new ValidationPipe) recipe: RecipeDTO,
   ) {
-    return this.itemService.addRecipeToItem(
+    const newRecipe = await this.itemService.addRecipeToItem(
       id,
-      body.whereMade,
-      body.recipeName,
-      body.mats,
+      recipe.where_made,
+      recipe.recipe_name,
+      recipe.materials,
     );
+    return newRecipe;
   }
 }

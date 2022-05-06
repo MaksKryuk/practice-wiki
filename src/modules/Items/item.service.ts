@@ -22,7 +22,26 @@ export class ItemService {
   ) {}
 
   async findAll(): Promise<Item[]> {
-    return this.itemModel.findAll();
+    return this.itemModel.findAll({
+      include: [
+        {
+          model: Item_tags,
+          attributes: ['id', 'tag_name'],
+          include: [],
+          through: {
+            attributes: [],
+          },
+        },
+        {
+          model: Recipes,
+          attributes: ['id', 'where_made', 'recipe_name', 'materials'],
+          include: [],
+          through: {
+            attributes: [],
+          },
+        },
+      ],
+    });
   }
 
   async create(itemName: string): Promise<Item> {

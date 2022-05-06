@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Body, Injectable } from '@nestjs/common';
 import { UsersService } from '../users.service';
 import { JwtService } from '@nestjs/jwt';
-
+import * as bcrypt from 'bcrypt';
 @Injectable()
 export class AuthService {
   constructor(
@@ -9,19 +9,54 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(lgn: string, pass: string) {
+  async validateUser(lgn: string, pass: string): Promise<any>  {
     const user = await this.usersService.findOne(lgn);
-    if (user && user.password === pass) {
-      const { password, ...result } = user;
-      return result;
+    if (!user) {
+      return null;
     }
-    return null;
+    
+    const match = await this.comparePassword(pass, user.password);    
+    if(!match){
+      return null;
+    }
+
+    const { password, ...result } = user;
+    return result;
   }
 
-  async login(user: any) {
-    const payload = { nickname: user.nickname, sub: user.id };
+  async login(user: any) {    
+    const payload = { login: user.dataValues.login, sub: user.dataValues.id };
+    const token = await this.generateToken(payload);
     return {
-      access_token: this.jwtService.sign(payload),
+      token,
     };
+  }
+
+  async create(user: any){
+
+    const pass = await this.hashPassword(user.password); 
+
+    const newUser = await this.usersService.create(user.role, user.login, pass);
+
+    const {password, ...result} = newUser['dataValues'];
+
+    const token = await this.generateToken(result);
+    
+    return{user: result, token};
+  }
+
+  async generateToken(user: any){
+    const token = await this.jwtService.sign(user);
+    return token;
+  }
+
+  async hashPassword(password: string) {
+    const hash = await bcrypt.hash(password, 10);
+    return hash;
+  }
+
+  async comparePassword(enteredPassword, dbPassword){
+    const match = await bcrypt.compare(enteredPassword, dbPassword);
+    return match;
   }
 }

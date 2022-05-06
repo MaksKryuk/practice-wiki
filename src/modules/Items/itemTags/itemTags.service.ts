@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Item_tags } from './itemTags.model';
 import { Item } from '../items.model';
 import { Items_item_tag } from 'src/modules/Items/itemTags/itemsItemTags.model';
+import model from 'sequelize/types/model';
 
 @Injectable()
 export class ItemTagsService {
@@ -12,7 +13,18 @@ export class ItemTagsService {
   ) {}
 
   async findAll(): Promise<Item_tags[]> {
-    return this.itemTagsModel.findAll();
+    return this.itemTagsModel.findAll({
+        include:[
+          {
+            model: Item,
+            attributes: ['id', 'item_name'],
+            include: [],
+            through: {
+              attributes: [],
+          },
+        },
+        ],
+      });
   }
 
   async create(itemTagName: string): Promise<Item_tags> {

@@ -9,35 +9,28 @@ export class UsersService {
     private usersModel: typeof Users,
   ) {}
 
-  getHello(): string {
-    return 'Hello Worlp!';
-  }
-
   async findAll(): Promise<Users[]> {
     return this.usersModel.findAll();
   }
 
   async create(
-    nick: string,
     userRole: string,
-    lgn: string,
-    pass: string,
+    userLogin: string,
+    userPassword: string,
   ): Promise<Users> {
     const user = await this.usersModel.findOne({
       where: {
-        nickname: nick,
         role: userRole,
-        login: lgn,
-        password: pass,
+        login: userLogin,
+        password: userPassword,
       },
     });
     if (user) return user;
 
     return this.usersModel.create({
-      nickname: nick,
       role: userRole,
-      login: lgn,
-      password: pass,
+      login: userLogin,
+      password: userPassword,
     });
   }
 
@@ -47,21 +40,20 @@ export class UsersService {
 
   async update(
     id: string,
-    nick: string,
     userRole: string,
     lgn: string,
     pass: string,
   ): Promise<Users> {
     const [, affectedRows] = await this.usersModel.update(
-      { nickname: nick, role: userRole, login: lgn, password: pass },
+      { role: userRole, login: lgn, password: pass },
       { where: { id }, returning: true, silent: false, logging: true },
     );
 
     return affectedRows[0];
   }
 
-  async delete(id: string): Promise<void> {
-    const user = await this.findOne(id);
+  async delete(lgn: string): Promise<void> {
+    const user = await this.findOne(lgn);
     await user.destroy();
   }
 }

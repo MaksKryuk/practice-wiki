@@ -9,25 +9,29 @@ import {
 import { LocalAuthGuard } from './modules/users/auth/local-auth.guard';
 import { AuthService } from './modules/users/auth/auth.service';
 import { JwtAuthGuard } from './modules/users/auth/jwt-auth.guard';
+import { UserDTO } from './modules/dto/user.dto'
+import { ValidationPipe } from './pipes/validation.pipe';
+import { DoesUserExist } from './modules/users/auth/doesUserExist.guard';
 
-@Controller()
+@Controller('/auth')
 export class AppController {
   constructor(private authService: AuthService) {}
 
   @UseGuards(LocalAuthGuard)
-  @Post('auth/login')
+  @Post('login')
   async login(@Request() req) {
     return this.authService.login(req.user);
-  }
-
-  @Get('/auth')
-  async validateUser(@Body() body: { lgn: string; pass: string }) {
-    return this.authService.validateUser(body.lgn, body.pass);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
     return req.user;
+  }
+
+  @UseGuards(DoesUserExist)
+  @Post("signup")
+  async signup(@Body( new ValidationPipe ) user:  UserDTO){
+    return await this.authService.create(user);
   }
 }

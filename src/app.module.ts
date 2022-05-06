@@ -10,12 +10,11 @@ import { Items_Recipes } from './modules/Items/recipes/itemsRecipes.model';
 import { Recipes } from './modules/Items/recipes/recipes.model';
 import { Text_blocks } from './modules/articles/textBlocks/textBlocks.model';
 import { Users } from './modules/users/users.model';
-import { Articles_text_blocks } from './modules/articles/textBlocks/articlesTextBlocks.model';
+import { Articles_text_blocks } from './modules/articles/textBlocks/articlesTextblocks/articlesTextBlocks.model';
 import { ItemModule } from './modules/Items/item.module';
 import { ArticlesModule } from './modules/articles/articles.module';
 import { UsersModule } from './modules/users/users.module';
 import { AuthService } from './modules/users/auth/auth.service';
-import { JwtService } from '@nestjs/jwt';
 import { AuthModule } from './modules/users/auth/auth.module';
 
 @Module({

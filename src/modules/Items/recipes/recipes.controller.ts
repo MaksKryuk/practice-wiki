@@ -6,7 +6,12 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
+import { RecipeDTO } from 'src/modules/dto/recipe.dto';
+import { RecipeOutputDTO } from 'src/modules/output-dto/recipe.output.dto';
+import { JwtAuthGuard } from 'src/modules/users/auth/jwt-auth.guard';
+import { ValidationPipe } from 'src/pipes/validation.pipe';
 import { Recipes } from './recipes.model';
 import { RecipesService } from './recipes.service';
 
@@ -15,39 +20,45 @@ export class RecipesController {
   constructor(private readonly recipesService: RecipesService) {}
 
   @Get('/')
-  findAll() {
-    return this.recipesService.findAll();
+  async findAll() {
+    return (await this.recipesService.findAll()).map((recipe) => new RecipeOutputDTO(recipe));
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('/')
-  create(
-    @Body() body: { whereMade: string; recipesName: string; mats: string },
+  async create(
+    @Body(new ValidationPipe) recipe: RecipeDTO,
   ) {
-    return this.recipesService.create(
-      body.whereMade,
-      body.recipesName,
-      body.mats,
+    const newRecipe = await this.recipesService.create(
+      recipe.where_made,
+      recipe.recipe_name,
+      recipe.materials,
     );
+    return new RecipeOutputDTO(newRecipe);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.recipesService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const recipe = await this.recipesService.findOne(id);
+    return new RecipeOutputDTO(recipe);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Put(':id')
-  update(
+  async update(
     @Param('id') id: string,
-    @Body() body: { whereMade: string; recipesName: string; mats: string },
-  ): Promise<Recipes> {
-    return this.recipesService.update(
+    @Body(new ValidationPipe) recipe: RecipeDTO,
+  ): Promise<RecipeOutputDTO> {
+    const updatedRecipe = await this.recipesService.update(
       id,
-      body.whereMade,
-      body.recipesName,
-      body.mats,
+      recipe.where_made,
+      recipe.recipe_name,
+      recipe.materials,
     );
+    return new RecipeOutputDTO(updatedRecipe);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   delete(@Param('id') id: string) {
     return this.recipesService.delete(id);
